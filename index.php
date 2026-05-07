@@ -1,3 +1,7 @@
+<?php
+include 'connect.php';
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -36,47 +40,59 @@
 
     </form>
 
-    <?php
+<?php
 
-    if(isset($_POST['calculate'])) {
+if(isset($_POST['calculate'])) {
 
-        $firstname = $_POST['firstname'];
-        $lastname = $_POST['lastname'];
-        $age = $_POST['age'];
-        $height = $_POST['height'];
-        $weight = $_POST['weight'];
+    $firstname = $_POST['firstname'];
+    $lastname = $_POST['lastname'];
+    $age = $_POST['age'];
+    $height = $_POST['height'];
+    $weight = $_POST['weight'];
 
-        $bmi = $weight / ($height * $height);
+    $bmi = $weight / ($height * $height);
 
-        echo "<div class='result'>";
-
-        echo "<h2>Results</h2>";
-
-        echo "<p>Name: $firstname $lastname</p>";
-        echo "<p>Age: $age</p>";
-        echo "<p>BMI: " . round($bmi, 2) . "</p>";
-
-        if($bmi < 18.5) {
-            echo "<p>Status: Underweight</p>";
-        }
-        elseif($bmi >= 18.5 && $bmi < 24.9) {
-            echo "<p>Status: Normal Weight</p>";
-        }
-        elseif($bmi >= 25 && $bmi < 29.9) {
-            echo "<p>Status: Overweight</p>";
-        }
-        else {
-            echo "<p>Status: Obese</p>";
-        }
-
-        echo "</div>";
+    if($bmi < 18.5){
+        $status = "Underweight";
+    }
+    elseif($bmi >= 18.5 && $bmi < 24.9){
+        $status = "Normal Weight";
+    }
+    elseif($bmi >= 25 && $bmi < 29.9){
+        $status = "Overweight";
+    }
+    else{
+        $status = "Obese";
     }
 
-    ?>
+    $sql = "INSERT INTO bmi_users 
+    (firstname, lastname, age, height, weight, bmi, status)
+    VALUES
+    ('$firstname', '$lastname', '$age', '$height', '$weight', '$bmi', '$status')";
+
+    if(mysqli_query($conn, $sql)){
+
+        echo "<div class='result'>";
+        echo "<h2>Result Saved Successfully</h2>";
+        echo "<p>Name: $firstname $lastname</p>";
+        echo "<p>BMI: " . round($bmi, 2) . "</p>";
+        echo "<p>Status: $status</p>";
+        echo "</div>";
+
+    } else {
+        echo "Error: " . mysqli_error($conn);
+    }
+}
+
+?>
+
+<br>
+
+<a href="view.php">
+    <button>View All Records</button>
+</a>
 
 </div>
-
-<script src="script.js"></script>
 
 </body>
 </html>
